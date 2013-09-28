@@ -80,10 +80,12 @@ RatePlanProvider.prototype.findRatePlans = function (hid, sd, ed, ad, ch, callba
             var edate = ed.split("-");
             var endDate = new Date(edate[0], edate[1]-1, edate[2]);   // new Date(2013, 05, 29);
             console.log("Searching for start date " + startDate + " to end date " + endDate);
-            rateplan_collection.find(
-                {'rateplan.start':  { $lte: startDate },
-                 'rateplan.end':    { $gte: endDate }
-                }
+            rateplan_collection.find({
+                'hotelcode':       hid,
+                'rateplan.start':  { $lte: startDate },
+                'rateplan.end':    { $gte: endDate }
+
+            }
             ).toArray(function (error, rateplans) {
                     if (error) callback(error)
                     else callback(null, rateplans)

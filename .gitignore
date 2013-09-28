@@ -7,12 +7,11 @@ lib-cov
 *.pid
 *.gz
 
-.idea
-.idea/*.xml
-.idea/workspace.xml
 pids
 logs
 results
 
 npm-debug.log
-node_modules
+
+.idea/*
+temp/*
