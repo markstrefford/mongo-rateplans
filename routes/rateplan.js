@@ -31,11 +31,6 @@ var addRatePlanRoutes = function (app, ratePlanProvider) {
         var ad =  req.urlParams.query.ad;
         var ch = req.urlParams.query.ch;
 
-        console.log("hid=" + hid);
-        console.log("sd=" + sd);
-        console.log("ed=" + ed);
-        console.log("ad=" + ad);
-        console.log("ch=" + ch);
         ratePlanProvider.findRatePlans(hid, sd, ed, ad, ch, function (error, rateplans) {
             // cors.setHeaders(res);
             res.send(rateplans);
@@ -79,12 +74,13 @@ RatePlanProvider.prototype.findRatePlans = function (hid, sd, ed, ad, ch, callba
             var startDate = new Date(sdate[0], sdate[1]-1, sdate[2]);   // new Date(2013, 05, 29);            var sdate = sd.split("-");
             var edate = ed.split("-");
             var endDate = new Date(edate[0], edate[1]-1, edate[2]);   // new Date(2013, 05, 29);
-            console.log("Searching for start date " + startDate + " to end date " + endDate);
+            var numGuests = parseInt(ad) + parseInt(ch);
+            console.log("Searching for start date " + startDate + " to end date " + endDate + " for " + numGuests + " guests!");
             rateplan_collection.find({
-                'hotelcode':       hid,
-                'rateplan.start':  { $lte: startDate },
-                'rateplan.end':    { $gte: endDate }
-
+                'hotelcode':            hid,
+                'rateplan.rate.start':  { $lte: startDate },
+                'rateplan.rate.end':    { $gte: endDate },
+                'rateplan.rate.basebyguestamts.numberofguests': numGuests
             }
             ).toArray(function (error, rateplans) {
                     if (error) callback(error)
