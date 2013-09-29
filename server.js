@@ -13,7 +13,8 @@ var express = require('express')
     , Server = require('mongodb').Server;
 
 var routes = require('./routes')
-var rateplan = require('./routes/rateplan.js');
+var rateplan = require('./routes/rateplan.js')
+    , rate = require('./routes/rate.js');
 
 var app = express()
 app.set('port', process.env.PORT || 3002);
@@ -39,11 +40,13 @@ app.configure('production', function () {
 });
 
 // Set up providers
-var ratePlanProvider = new RatePlanProvider('mongodb.local', 'rateplans', 27017);
+var ratePlanProvider =  new RatePlanProvider('mongodb.local', 'rateplans', 27017);
+var rateProvider =      new RateProvider('mongodb.local', 'rateplans', 27017);
 
 // Set up routes
 app.get('/', routes.index);
-var ratePlanRoutes = rateplan.addRatePlanRoutes(app, ratePlanProvider);
+var ratePlanRoutes =    rateplan.addRatePlanRoutes(app, ratePlanProvider);
+var rateRoutes =        rate.addRateRoutes(app, rateProvider, ratePlanProvider);
 
 // Now create the server
 http.createServer(app).listen(app.get('port'), function () {

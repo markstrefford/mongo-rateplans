@@ -12,6 +12,7 @@ var Connection = require('mongodb').Connection;
 var Server = require('mongodb').Server;
 var BSON = require('mongodb').BSON;
 var ObjectID = require('mongodb').ObjectID;
+var moment = require('moment')
 // var cors = require('../common/cors');
 
 var parseUrlParams = function (req, res, next) {
@@ -25,11 +26,15 @@ var parseUrlParams = function (req, res, next) {
 var addRatePlanRoutes = function (app, ratePlanProvider) {
     app.get('/rateplans', parseUrlParams, function (req, res) {
         console.log("/rateplans route");
+        // Date calculations
+        var sd =  moment(req.urlParams.query.sd, 'YYYY-MM-DD');
+        var ed = moment(req.urlParams.query.ed, 'YYYY-MM-DD');
+        var nd = ed.diff(sd, 'days')
+
         var hid = req.urlParams.query.hid;
-        var sd =  req.urlParams.query.sd;
-        var ed = req.urlParams.query.ed;
         var ad =  req.urlParams.query.ad;
         var ch = req.urlParams.query.ch;
+        console.log("Number of days = " + nd);
 
         ratePlanProvider.findRatePlans(hid, sd, ed, ad, ch, function (error, rateplans) {
             // cors.setHeaders(res);
@@ -70,16 +75,12 @@ RatePlanProvider.prototype.findRatePlans = function (hid, sd, ed, ad, ch, callba
     this.getCollection(function (error, rateplan_collection) {
         if (error) callback(error)
         else {
-            var sdate = sd.split("-");
-            var startDate = new Date(sdate[0], sdate[1]-1, sdate[2]);   // new Date(2013, 05, 29);            var sdate = sd.split("-");
-            var edate = ed.split("-");
-            var endDate = new Date(edate[0], edate[1]-1, edate[2]);   // new Date(2013, 05, 29);
             var numGuests = parseInt(ad) + parseInt(ch);
-            console.log("Searching for start date " + startDate + " to end date " + endDate + " for " + numGuests + " guests!");
+            console.log("Searching for start date " + sd.toISOString() + " to end date " + ed.toISOString() + " for " + numGuests + " guests!");
             rateplan_collection.find({
                 'hotelcode':            hid,
-                'rateplan.rate.start':  { $lte: startDate },
-                'rateplan.rate.end':    { $gte: endDate },
+                'rateplan.rate.start':  { $lte: sd.toDate() },
+                'rateplan.rate.end':    { $gte: ed.toDate() },
                 'rateplan.rate.basebyguestamts.numberofguests': numGuests
             }
             ).toArray(function (error, rateplans) {
