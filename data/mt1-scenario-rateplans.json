@@ -1,0 +1,440 @@
+ [ {
+    "hotelcode": "mt1",
+    "rateplan": {
+      "rateplannotiftype": "new",
+      "rateplancode": "RP1",
+      "rateplancategory": "DISC",
+      "start": ISODate("2013-01-01T00:00:00.000Z"),
+      "end": ISODate("2013-12-31T00:00:00.000Z"),
+      "currencycode": "GBP",
+      "yieldableindicator": "true",
+      "marketcode": "LR",
+      "inventoryallocind": "false",
+      "iscommissionable": "1",
+      "rateplanstattype": "initial",
+      "bookingrules": {
+        "bookrule": {
+          "minadvancedbookingoffset": "P7D",
+          "maxadvancedbookingoffset": "P14D"
+        },
+        "cancelpenalty": {
+          "offsettimeunit": "day",
+          "offsetdroptime": "BeforeArrival",
+          "nmbrofnights": "1",
+          "offsetunitmultiplier": 1
+        }
+      },
+      "availdaysofweek": [
+        "Sun",
+        "Sat",
+        "Fri",
+        "Thur",
+        "Wed",
+        "Tue",
+        "Mon"
+      ],
+      "startdaysofweek": [
+        "Sun",
+        "Sat",
+        "Fri",
+        "Thur",
+        "Wed",
+        "Tue",
+        "Mon"
+      ],
+      "lengthsofstay": {
+        "minlos": "1",
+        "maxlos": "10"
+      },
+      "rate": {
+        "invtypecode": "sng",
+        "start": ISODate("2013-01-01T00:00:00.000Z"),
+        "end": ISODate("2013-12-31T00:00:00.000Z"),
+        "currencycode": "GBP",
+        "basebyguestamts": {
+          "amountbeforetax": "100",
+          "agequalifyingcode": "10",
+          "numberofguests": 1
+        }
+      },
+      "fees": [
+        {
+          "amount": "20",
+          "currencycode": "GBP",
+          "desc": "VAT"
+        },
+        {
+          "amount": "15",
+          "currencycode": "GBP",
+          "desc": "Breakfast"
+        }
+      ]
+    }
+  },
+  {
+    "hotelcode": "mt1",
+    "rateplan": {
+      "rateplannotiftype": "new",
+      "rateplancode": "RP2",
+      "rateplancategory": "DISC",
+      "start": ISODate("2013-01-01T00:00:00.000Z"),
+      "end": ISODate("2013-12-31T00:00:00.000Z"),
+      "currencycode": "GBP",
+      "yieldableindicator": "true",
+      "marketcode": "LR",
+      "inventoryallocind": "false",
+      "iscommissionable": "1",
+      "rateplanstattype": "initial",
+      "bookingrules": {
+        "bookrule": {
+          "minadvancedbookingoffset": "P7D",
+          "maxadvancedbookingoffset": "P14D"
+        },
+        "cancelpenalty": {
+          "offsettimeunit": "day",
+          "offsetdroptime": "BeforeArrival",
+          "nmbrofnights": "1",
+          "offsetunitmultiplier": 1
+        }
+      },
+      "availdaysofweek": [
+        "Sun",
+        "Sat",
+        "Fri",
+        "Thur",
+        "Wed",
+        "Tue",
+        "Mon"
+      ],
+      "startdaysofweek": [
+        "Sun",
+        "Sat",
+        "Fri",
+        "Thur",
+        "Wed",
+        "Tue",
+        "Mon"
+      ],
+      "lengthsofstay": {
+        "minlos": "1",
+        "maxlos": "10"
+      },
+      "rate": {
+        "invtypecode": "dbl",
+        "start": ISODate("2013-01-01T00:00:00.000Z"),
+        "end": ISODate("2013-12-31T00:00:00.000Z"),
+        "currencycode": "GBP",
+        "basebyguestamts": {
+          "amountbeforetax": "200",
+          "agequalifyingcode": "10",
+          "numberofguests": 2
+        }
+      },
+      "fees": [
+        {
+          "percent": "20",
+          "currencycode": "GBP",
+          "desc": "VAT"
+        },
+        {
+          "amount": "15",
+          "currencycode": "GBP",
+          "desc": "Breakfast"
+        }
+      ]
+    }
+  }, 
+  {
+    "hotelcode": "mt1",
+    "rateplan": {
+      "rateplannotiftype": "new",
+      "rateplancode": "RP3",
+      "rateplancategory": "DISC",
+      "start": ISODate("2013-01-01T00:00:00.000Z"),
+      "end": ISODate("2013-12-31T00:00:00.000Z"),
+      "currencycode": "GBP",
+      "yieldableindicator": "true",
+      "marketcode": "LR",
+      "inventoryallocind": "false",
+      "iscommissionable": "1",
+      "rateplanstattype": "initial",
+      "bookingrules": {
+        "bookrule": {
+          "minadvancedbookingoffset": "P7D",
+          "maxadvancedbookingoffset": "P14D"
+        },
+        "cancelpenalty": {
+          "offsettimeunit": "day",
+          "offsetdroptime": "BeforeArrival",
+          "nmbrofnights": "1",
+          "offsetunitmultiplier": 1
+        }
+      },
+      "availdaysofweek": [
+        "Sun",
+        "Sat",
+        "Fri",
+        "Thur",
+        "Wed",
+        "Tue",
+        "Mon"
+      ],
+      "startdaysofweek": [
+        "Sun",
+        "Sat",
+        "Fri",
+        "Thur",
+        "Wed",
+        "Tue",
+        "Mon"
+      ],
+      "lengthsofstay": {
+        "minlos": "1",
+        "maxlos": "10"
+      },
+      "rate": {
+        "invtypecode": "fmly",
+        "start": ISODate("2013-01-01T00:00:00.000Z"),
+        "end": ISODate("2013-12-31T00:00:00.000Z"),
+        "currencycode": "GBP",
+        "basebyguestamts": {
+          "amountbeforetax": "300",
+          "agequalifyingcode": "10",
+          "numberofguests": 4
+        }
+      },
+      "fees": [
+        {
+          "percent": "20",
+          "currencycode": "GBP",
+          "desc": "VAT"
+        },
+        {
+          "amount": "15",
+          "currencycode": "GBP",
+          "desc": "Breakfast"
+        }
+      ]
+    }
+  },
+  {
+    "hotelcode": "mt1",
+    "rateplan": {
+      "rateplannotiftype": "new",
+      "rateplancode": "RP4",
+      "rateplancategory": "DISC",
+      "start": ISODate("2013-01-01T00:00:00.000Z"),
+      "end": ISODate("2013-12-31T00:00:00.000Z"),
+      "currencycode": "GBP",
+      "yieldableindicator": "true",
+      "marketcode": "LR",
+      "inventoryallocind": "false",
+      "iscommissionable": "1",
+      "rateplanstattype": "initial",
+      "bookingrules": {
+        "bookrule": {
+          "minadvancedbookingoffset": "P7D",
+          "maxadvancedbookingoffset": "P14D"
+        },
+        "cancelpenalty": {
+          "offsettimeunit": "day",
+          "offsetdroptime": "BeforeArrival",
+          "nmbrofnights": "1",
+          "offsetunitmultiplier": 1
+        }
+      },
+      "availdaysofweek": [
+        "Sun",
+        "Sat",
+        "Fri",
+        "Thur",
+        "Wed",
+        "Tue",
+        "Mon"
+      ],
+      "startdaysofweek": [
+        "Sun",
+        "Sat",
+        "Fri",
+        "Thur",
+        "Wed",
+        "Tue",
+        "Mon"
+      ],
+      "lengthsofstay": {
+        "minlos": "3",
+        "maxlos": "10"
+      },
+      "rate": {
+        "invtypecode": "dbl",
+        "start": ISODate("2013-01-01T00:00:00.000Z"),
+        "end": ISODate("2013-12-31T00:00:00.000Z"),
+        "currencycode": "GBP",
+        "basebyguestamts": {
+          "amountbeforetax": "200",
+          "agequalifyingcode": "10",
+          "numberofguests": 1
+        }
+      },
+      "fees": [
+        {
+          "percent": "20",
+          "currencycode": "GBP",
+          "desc": "VAT"
+        },
+        {
+          "amount": "15",
+          "currencycode": "GBP",
+          "desc": "Breakfast"
+        }
+      ]
+    }
+  },
+  {
+    "hotelcode": "mt1",
+    "rateplan": {
+      "rateplannotiftype": "new",
+      "rateplancode": "RP5",
+      "rateplancategory": "DISC",
+      "start": ISODate("2013-01-01T00:00:00.000Z"),
+      "end": ISODate("2013-12-31T00:00:00.000Z"),
+      "currencycode": "GBP",
+      "yieldableindicator": "true",
+      "marketcode": "LR",
+      "inventoryallocind": "false",
+      "iscommissionable": "1",
+      "rateplanstattype": "initial",
+      "bookingrules": {
+        "bookrule": {
+          "minadvancedbookingoffset": "P7D",
+          "maxadvancedbookingoffset": "P14D"
+        },
+        "cancelpenalty": {
+          "offsettimeunit": "day",
+          "offsetdroptime": "BeforeArrival",
+          "nmbrofnights": "1",
+          "offsetunitmultiplier": 1
+        }
+      },
+      "availdaysofweek": [
+        "Sun",
+        "Sat",
+        "Fri",
+        "Thur",
+        "Wed",
+        "Tue",
+        "Mon"
+      ],
+      "startdaysofweek": [
+        "Sun",
+        "Sat",
+        "Fri",
+        "Thur",
+        "Wed",
+        "Tue",
+        "Mon"
+      ],
+      "lengthsofstay": {
+        "minlos": "1",
+        "maxlos": "10"
+      },
+      "rate": {
+        "invtypecode": "fmly",
+        "start": ISODate("2013-01-01T00:00:00.000Z"),
+        "end": ISODate("2013-12-31T00:00:00.000Z"),
+        "currencycode": "GBP",
+        "basebyguestamts": {
+          "amountbeforetax": "300",
+          "agequalifyingcode": "10",
+          "numberofguests": 4
+        }
+      },
+      "fees": [
+        {
+          "amount": "20",
+          "currencycode": "GBP",
+          "desc": "VAT"
+        },
+        {
+          "amount": "15",
+          "currencycode": "GBP",
+          "desc": "Breakfast"
+        }
+      ]
+    }
+  },
+  {
+    "hotelcode": "mt1",
+    "rateplan": {
+      "rateplannotiftype": "new",
+      "rateplancode": "RP6",
+      "rateplancategory": "DISC",
+      "start": ISODate("2013-01-01T00:00:00.000Z"),
+      "end": ISODate("2013-12-31T00:00:00.000Z"),
+      "currencycode": "GBP",
+      "yieldableindicator": "true",
+      "marketcode": "LR",
+      "inventoryallocind": "false",
+      "iscommissionable": "1",
+      "rateplanstattype": "initial",
+      "bookingrules": {
+        "bookrule": {
+          "minadvancedbookingoffset": "P7D",
+          "maxadvancedbookingoffset": "P14D"
+        },
+        "cancelpenalty": {
+          "offsettimeunit": "day",
+          "offsetdroptime": "BeforeArrival",
+          "nmbrofnights": "1",
+          "offsetunitmultiplier": 1
+        }
+      },
+      "availdaysofweek": [
+        "Sun",
+        "Sat",
+        "Fri",
+        "Thur",
+        "Wed",
+        "Tue",
+        "Mon"
+      ],
+      "startdaysofweek": [
+        "Sun",
+        "Sat",
+        "Fri",
+        "Thur",
+        "Wed",
+        "Tue",
+        "Mon"
+      ],
+      "lengthsofstay": {
+        "minlos": "1",
+        "maxlos": "10"
+      },
+      "rate": {
+        "invtypecode": "dbl",
+        "start": ISODate("2013-01-01T00:00:00.000Z"),
+        "end": ISODate("2013-12-31T00:00:00.000Z"),
+        "currencycode": "GBP",
+        "basebyguestamts": {
+          "amountbeforetax": "200",
+          "agequalifyingcode": "10",
+          "numberofguests": 2
+        }
+      },
+      "fees": [
+        {
+          "amount": "20",
+          "currencycode": "GBP",
+          "desc": "VAT"
+        },
+        {
+          "amount": "15",
+          "currencycode": "GBP",
+          "desc": "Breakfast"
+        }
+      ]
+    }
+  }
+]
+

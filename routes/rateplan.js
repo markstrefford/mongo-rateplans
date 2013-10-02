@@ -81,7 +81,7 @@ RatePlanProvider.prototype.findRatePlans = function (hid, sd, ed, ad, ch, callba
                 'hotelcode':            hid,
                 'rateplan.rate.start':  { $lte: sd.toDate() },
                 'rateplan.rate.end':    { $gte: ed.toDate() },
-                'rateplan.rate.basebyguestamts.numberofguests': numGuests
+                'rateplan.rate.basebyguestamts.numberofguests': { $gte: parseInt(ad) }
             }
             ).toArray(function (error, rateplans) {
                     if (error) callback(error)
