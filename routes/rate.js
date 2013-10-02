@@ -71,18 +71,6 @@ RateProvider.prototype.getCollection = function (callback) {
  *
  */
 
-// Calculate base rates based on occupancy, nights, etc.
-var calcBaseRate = function (rateplan, numGuests, nd) {
-    var rate = nd * rateplan.rate.basebyguestamts.amountbeforetax * numGuests;
-    var invtype = rateplan.rate.invtypecode;
-    var currency = rateplan.rate.currencycode;
-    return {
-        'rate': rate,
-        'invtype': invtype,
-        'currency': currency
-    };
-}
-
 // Check for JSon object existence
 // From stackoverflow/questions/1129209/check-if-json-keys-node-exist
 function jPath(obj, a) {
@@ -151,7 +139,7 @@ RateProvider.prototype.getRates = function (hid, sd, ed, ad, ch, nd, ratePlanPro
                           if ( nd == offer.numnights ) {
                               console.log("staying for " + nd + " nights so offer valid!");
                               console.log("pre-offer rate = " + preDiscountRates[i].roomPrice + ", saving = " + rateplan.rate.basebyguestamts.amountbeforetax);
-                              preDiscountRates[i].roomPrice -= rateplan.rate.basebyguestamts.amountbeforetax;
+                              preDiscountRates[i].roomPrice -= ( offer.freenights * rateplan.rate.basebyguestamts.amountbeforetax );
                           } else {
                               console.log("freenights - num nights not valid!");
                           }
@@ -163,8 +151,14 @@ RateProvider.prototype.getRates = function (hid, sd, ed, ad, ch, nd, ratePlanPro
             preDiscountRates[i].totalPrice = preDiscountRates[i].roomPrice + preDiscountRates[i].suppPrice;
 
         }
+
+        // Now apply channels, user groups and advanced purchase discounts
+
+
+
+        // All done!
         rates = preDiscountRates;
-        console.log("rate[]=" + JSON.stringify(rates));
+        console.log("rates[]=" + JSON.stringify(rates));
         callback(null, rates);
     })
     // TODO - Ensure this returns what is needed (Json??)
