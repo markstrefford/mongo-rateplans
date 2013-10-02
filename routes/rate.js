@@ -83,18 +83,6 @@ var calcBaseRate = function (rateplan, numGuests, nd) {
     };
 }
 
-// Calculate supplement cost
-var calcSuppRate = function (rateplan) {
-    // TODO - Work through supplements, so need to pass them in!!!
-    return 0;
-}
-
-// Apply discounts and return total rate
-var applyDiscount = function (rateplan, baseRate, suppRate) {
-    // Todo - work out applicable discounts here somehow!!
-    return baseRate + suppRate;
-}
-
 // Check for JSon object existence
 // From stackoverflow/questions/1129209/check-if-json-keys-node-exist
 function jPath(obj, a) {
@@ -109,39 +97,73 @@ function jPath(obj, a) {
 
 
 RateProvider.prototype.getRates = function (hid, sd, ed, ad, ch, nd, ratePlanProvider, callback) {
+    // Get Rateplans based on criteria in query string
     ratePlanProvider.findRatePlans(hid, sd, ed, ad, ch, function (error, rateplans) {
         var rates = [],
-            supps = [];
+            preDiscountRates = [];
+        var numGuests = parseInt(ad) + parseInt(ch);
+
         if (typeof(rateplans.length) == "undefined")
             rateplans = [rateplans];
-        var numGuests = parseInt(ad) + parseInt(ch);
         console.log("We have rateplans returned...");
         console.log("rateplans.length=" + rateplans.length);
+
+        // Iterate through rateplans and calculate
         for (var i = 0; i < rateplans.length; i++) {
             // TODO - Rework to create a json string here!!
             rateplan = rateplans[i].rateplan;
             console.log("Rateplan[i]=" + JSON.stringify(rateplan));
+            var ratePlanId = rateplan.rateplancode;
             var roomPrice = nd * rateplan.rate.basebyguestamts.amountbeforetax;
             var invtype = rateplan.rate.invtypecode;
             var currency = rateplan.rate.currencycode;
-            var occupancy = rateplan.rate.basebyguestamts.numberofguests;
+
             // TODO add in all supplements!!
-            console.log("typeof(rateplan.rate.additionalguestamounts.child");
+            var occupancy = rateplan.rate.basebyguestamts.numberofguests;
+
+            // TODO handle offers better?  Use Nools???
+            var offers = jPath(rateplan, 'offers') != null ? rateplan.offers : false;
+
+            // start to populate the interim response
             var suppPrice = jPath(rateplan, 'rate.additionalguestamounts.child') != null ? (nd * rateplan.rate.additionalguestamounts.child * ch) : 0;
-            rates[i] = {
+            preDiscountRates[i] = {
+                'ratePlanId' : ratePlanId,
                 'roomPrice': roomPrice,
                 'suppPrice': suppPrice,
                 'invtype': invtype,
                 'occupancy': occupancy,
-                'currency': currency
+                'currency': currency,
+                'offers' : offers
             }
-            /*
-             var baseRate = calcBaseRate(rateplan, numGuests, nd);
-             var suppRate = calcSuppRate(rateplan);
-             rates[i] = applyDiscount(rateplan, baseRate, suppRate);
-             */
 
         }
+
+        // Work out applicable discounts now
+        for (var i = 0; i < preDiscountRates.length; i++) {
+            console.log("Offers:" + preDiscountRates[i].offers.length );
+            if ( preDiscountRates[i].offers != null) {
+                  console.log("Calculating offers for " + preDiscountRates[i].offers);
+                  for (var j=0; j < preDiscountRates[i].offers.length; j++ ) {
+                      var offer = preDiscountRates[i].offers[j];
+
+                      if ( offer.type == 'freenight' ) {
+                          console.log("Found offer freenight");
+                          if ( nd == offer.numnights ) {
+                              console.log("staying for " + nd + " nights so offer valid!");
+                              console.log("pre-offer rate = " + preDiscountRates[i].roomPrice + ", saving = " + rateplan.rate.basebyguestamts.amountbeforetax);
+                              preDiscountRates[i].roomPrice -= rateplan.rate.basebyguestamts.amountbeforetax;
+                          } else {
+                              console.log("freenights - num nights not valid!");
+                          }
+                      }
+                  }
+              } else {
+                  console.log("No offers for " + preDiscountRates[i]);
+              }
+            preDiscountRates[i].totalPrice = preDiscountRates[i].roomPrice + preDiscountRates[i].suppPrice;
+
+        }
+        rates = preDiscountRates;
         console.log("rate[]=" + JSON.stringify(rates));
         callback(null, rates);
     })
@@ -150,5 +172,4 @@ RateProvider.prototype.getRates = function (hid, sd, ed, ad, ch, nd, ratePlanPro
 }
 
 exports.RateProvider = RateProvider;
-
 exports.addRateRoutes = addRateRoutes;
