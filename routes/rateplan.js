@@ -25,18 +25,19 @@ var parseUrlParams = function (req, res, next) {
  */
 var addRatePlanRoutes = function (app, ratePlanProvider) {
     app.get('/rateplans', parseUrlParams, function (req, res) {
-        console.log("/rateplans route");
         // Date calculations
         var sd =  moment(req.urlParams.query.sd, 'YYYY-MM-DD');
         var ed = moment(req.urlParams.query.ed, 'YYYY-MM-DD');
         var nd = ed.diff(sd, 'days')
+        console.log("Number of days = " + nd);
 
+        // Get other relevant stuff from the query string
+        // TODO - Refactor this into an object perhaps??
         var hid = req.urlParams.query.hid;
         var ad =  req.urlParams.query.ad;
         var ch = req.urlParams.query.ch;
-        console.log("Number of days = " + nd);
 
-        ratePlanProvider.findRatePlans(hid, sd, ed, ad, ch, function (error, rateplans) {
+        ratePlanProvider.findRatePlans(hid, sd, ed, ad, ch, nd, function (error, rateplans) {
             // cors.setHeaders(res);
             res.send(rateplans);
         })
@@ -71,7 +72,7 @@ RatePlanProvider.prototype.findAll = function (callback) {
     });
 };
 
-RatePlanProvider.prototype.findRatePlans = function (hid, sd, ed, ad, ch, callback) {
+RatePlanProvider.prototype.findRatePlans = function (hid, sd, ed, ad, ch, nd, callback) {
     this.getCollection(function (error, rateplan_collection) {
         if (error) callback(error)
         else {
@@ -81,8 +82,11 @@ RatePlanProvider.prototype.findRatePlans = function (hid, sd, ed, ad, ch, callba
                 'hotelcode':            hid,
                 'rateplan.rate.start':  { $lte: sd.toDate() },
                 'rateplan.rate.end':    { $gte: ed.toDate() },
-                'rateplan.rate.basebyguestamts.numberofguests': { $gte: parseInt(ad) }
-            }
+                'rateplan.rate.basebyguestamts.numberofguests': { $gte: parseInt(ad) },
+                'rateplan.lengthsofstay.minlos' : { $lte: nd},
+                'rateplan.lengthsofstay.maxlos' : { $gte: nd}
+
+                }
             ).toArray(function (error, rateplans) {
                     if (error) callback(error)
                     else callback(null, rateplans)

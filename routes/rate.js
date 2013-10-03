@@ -32,6 +32,7 @@ var addRateRoutes = function (app, rateProvider, ratePlanProvider) {
         var sd = moment(req.urlParams.query.sd, 'YYYY-MM-DD');
         var ed = moment(req.urlParams.query.ed, 'YYYY-MM-DD');
         var nd = ed.diff(sd, 'days')
+        console.log("Number of days = " + nd);
 
         var hid = req.urlParams.query.hid;
         var ad = req.urlParams.query.ad;
@@ -86,7 +87,7 @@ function jPath(obj, a) {
 
 RateProvider.prototype.getRates = function (hid, sd, ed, ad, ch, nd, ratePlanProvider, callback) {
     // Get Rateplans based on criteria in query string
-    ratePlanProvider.findRatePlans(hid, sd, ed, ad, ch, function (error, rateplans) {
+    ratePlanProvider.findRatePlans(hid, sd, ed, ad, ch, nd, function (error, rateplans) {
         var rates = [],
             preDiscountRates = [];
         var numGuests = parseInt(ad) + parseInt(ch);
@@ -142,11 +143,12 @@ RateProvider.prototype.getRates = function (hid, sd, ed, ad, ch, nd, ratePlanPro
                               preDiscountRates[i].roomPrice -= ( offer.freenights * rateplan.rate.basebyguestamts.amountbeforetax );
                           } else {
                               console.log("freenights - num nights not valid!");
+                              preDiscountRates[i].offers = 'false';
                           }
                       }
                   }
               } else {
-                  console.log("No offers for " + preDiscountRates[i]);
+                console.log("No offers for " + preDiscountRates[i]);
               }
             preDiscountRates[i].totalPrice = preDiscountRates[i].roomPrice + preDiscountRates[i].suppPrice;
 
