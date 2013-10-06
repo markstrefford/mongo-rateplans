@@ -1,0 +1,4 @@
+{ "_id" : { "$oid" : "524eba49cfc1f7a11eb422c7" }, "channel" : "mobile", "advancedpurchase" : 0.8, "flexiblepurchase" : 0.9 }
+{ "_id" : { "$oid" : "524eba63cfc1f7a11eb422c8" }, "channel" : "website", "advancedpurchase" : 0.9, "flexiblepurchase" : 1 }
+{ "_id" : { "$oid" : "524eba88cfc1f7a11eb422c9" }, "channel" : "corporate", "advancedpurchase" : 0.8, "flexiblepurchase" : 0.9 }
+{ "_id" : { "$oid" : "524eba9acfc1f7a11eb422ca" }, "channel" : "loyalty", "advancedpurchase" : 0.8, "flexiblepurchase" : 0.9 }

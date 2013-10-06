@@ -34,9 +34,13 @@ var addRateRoutes = function (app, rateProvider, ratePlanProvider) {
         var nd = ed.diff(sd, 'days')
         console.log("Number of days = " + nd);
 
+        // Hotel / occupancy details
         var hid = req.urlParams.query.hid;
         var ad = req.urlParams.query.ad;
         var ch = req.urlParams.query.ch;
+
+        // Determine channel
+        var channel = req.urlParams.query.channel;
 
         var parking = 0;
         rateProvider.getRates(hid, sd, ed, ad, ch, nd, ratePlanProvider, function (error, rates) {
@@ -107,6 +111,7 @@ RateProvider.prototype.getRates = function (hid, sd, ed, ad, ch, nd, ratePlanPro
             var invtype = rateplan.rate.invtypecode;
             var currency = rateplan.rate.currencycode;
 
+
             // TODO add in all supplements!!
             var occupancy = rateplan.rate.basebyguestamts.numberofguests;
 
@@ -155,12 +160,17 @@ RateProvider.prototype.getRates = function (hid, sd, ed, ad, ch, nd, ratePlanPro
         }
 
         // Now apply channels, user groups and advanced purchase discounts
+        var c = 0;
+
+        for (var i = 0; i < preDiscountRates.length; i++) {
+
+        }
 
 
 
-        // All done!
+            // All done!
         rates = preDiscountRates;
-        console.log("rates[]=" + JSON.stringify(rates));
+        //console.log("rates[]=" + JSON.stringify(rates));
         callback(null, rates);
     })
     // TODO - Ensure this returns what is needed (Json??)
