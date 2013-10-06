@@ -92,98 +92,101 @@ function jPath(obj, a) {
 RateProvider.prototype.getRates = function (channel, hid, sd, ed, ad, ch, nd, ratePlanProvider, channelProvider, callback) {
     // Get Rateplans based on criteria in query string
     ratePlanProvider.findRatePlans(hid, sd, ed, ad, ch, nd, function (error, rateplans) {
-        var rates = [],
-            preDiscountRates = [];
-        var numGuests = parseInt(ad) + parseInt(ch);
+        channelProvider.getChannel(channel, function (error, channel) {
 
-        if (typeof(rateplans.length) == "undefined")
-            rateplans = [rateplans];
-        console.log("We have rateplans returned...");
-        console.log("rateplans.length=" + rateplans.length);
+            var rates = [],
+                preDiscountRates = [];
+            var numGuests = parseInt(ad) + parseInt(ch);
 
-        // Iterate through rateplans and calculate
-        for (var i = 0; i < rateplans.length; i++) {
-            // TODO - Rework to create a json string here!!
-            rateplan = rateplans[i].rateplan;
-            console.log("Rateplan[i]=" + JSON.stringify(rateplan));
-            var ratePlanId = rateplan.rateplancode;
-            var roomPrice = nd * rateplan.rate.basebyguestamts.amountbeforetax;
-            var invtype = rateplan.rate.invtypecode;
-            var currency = rateplan.rate.currencycode;
+            if (typeof(rateplans.length) == "undefined")
+                rateplans = [rateplans];
+            console.log("We have rateplans returned...");
+            console.log("rateplans.length=" + rateplans.length);
+
+            // Iterate through rateplans and calculate
+            for (var i = 0; i < rateplans.length; i++) {
+                // TODO - Rework to create a json string here!!
+                rateplan = rateplans[i].rateplan;
+                console.log("Rateplan[i]=" + JSON.stringify(rateplan));
+                var ratePlanId = rateplan.rateplancode;
+                var roomPrice = nd * rateplan.rate.basebyguestamts.amountbeforetax;
+                var invtype = rateplan.rate.invtypecode;
+                var currency = rateplan.rate.currencycode;
 
 
-            // TODO add in all supplements!!
-            var occupancy = rateplan.rate.basebyguestamts.numberofguests;
+                // TODO add in all supplements!!
+                var occupancy = rateplan.rate.basebyguestamts.numberofguests;
 
-            // TODO handle offers better?  Use Nools???
-            var offers = jPath(rateplan, 'offers') != null ? rateplan.offers : false;
+                // TODO handle offers better?  Use Nools???
+                var offers = jPath(rateplan, 'offers') != null ? rateplan.offers : false;
 
-            // start to populate the interim response
-            var suppPrice = jPath(rateplan, 'rate.additionalguestamounts.child') != null ? (nd * rateplan.rate.additionalguestamounts.child * ch) : 0;
-            preDiscountRates[i] = {
-                'ratePlanId' : ratePlanId,
-                'roomPrice': roomPrice,
-                'suppPrice': suppPrice,
-                'invtype': invtype,
-                'occupancy': occupancy,
-                'currency': currency,
-                'offers' : offers
+                // start to populate the interim response
+                var suppPrice = jPath(rateplan, 'rate.additionalguestamounts.child') != null ? (nd * rateplan.rate.additionalguestamounts.child * ch) : 0;
+                preDiscountRates[i] = {
+                    'ratePlanId': ratePlanId,
+                    'roomPrice': roomPrice,
+                    'suppPrice': suppPrice,
+                    'invtype': invtype,
+                    'occupancy': occupancy,
+                    'currency': currency,
+                    'offers': offers
+                }
+
             }
 
-        }
+            // Work out applicable discounts now
+            for (var i = 0; i < preDiscountRates.length; i++) {
+                console.log("Offers:" + preDiscountRates[i].offers.length);
+                if (preDiscountRates[i].offers != null) {
+                    console.log("Calculating offers for " + JSON.stringify(preDiscountRates[i].offers));
+                    for (var j = 0; j < preDiscountRates[i].offers.length; j++) {
+                        var offer = preDiscountRates[i].offers[j];
 
-        // Work out applicable discounts now
-        for (var i = 0; i < preDiscountRates.length; i++) {
-            console.log("Offers:" + preDiscountRates[i].offers.length );
-            if ( preDiscountRates[i].offers != null) {
-                  console.log("Calculating offers for " + JSON.stringify(preDiscountRates[i].offers));
-                  for (var j=0; j < preDiscountRates[i].offers.length; j++ ) {
-                      var offer = preDiscountRates[i].offers[j];
+                        if (offer.type == 'freenight') {
+                            console.log("Found offer freenight");
+                            if (nd == offer.numnights) {
+                                console.log("staying for " + nd + " nights so offer valid!");
+                                console.log("pre-offer rate = " + preDiscountRates[i].roomPrice + ", saving = " + rateplan.rate.basebyguestamts.amountbeforetax);
+                                preDiscountRates[i].roomPrice -= ( offer.freenights * rateplan.rate.basebyguestamts.amountbeforetax );
+                            } else {
+                                console.log("freenights - num nights not valid!");
+                                preDiscountRates[i].offers = 'false';
+                            }
+                        }
+                        if (offer.type == 'discount') {
+                            console.log("Found offer discount");
+                            if (nd = offer.numnights) {
+                                console.log("staying for " + nd + " nights so offer valid!");
+                                console.log("pre-offer rate = " + preDiscountRates[i].roomPrice + ", saving = " + (1 - offer.discount));
+                                preDiscountRates[i].roomPrice *= offer.discount;
+                            } else {
+                                console.log("discount - num nights not valid!");
+                                preDiscountRates[i].offers = 'false';
+                            }
+                        }
+                    }
+                } else {
+                    console.log("No offers for " + preDiscountRates[i]);
+                }
+                preDiscountRates[i].totalPrice = preDiscountRates[i].roomPrice + preDiscountRates[i].suppPrice;
 
-                      if ( offer.type == 'freenight' ) {
-                          console.log("Found offer freenight");
-                          if ( nd == offer.numnights ) {
-                              console.log("staying for " + nd + " nights so offer valid!");
-                              console.log("pre-offer rate = " + preDiscountRates[i].roomPrice + ", saving = " + rateplan.rate.basebyguestamts.amountbeforetax);
-                              preDiscountRates[i].roomPrice -= ( offer.freenights * rateplan.rate.basebyguestamts.amountbeforetax );
-                          } else {
-                              console.log("freenights - num nights not valid!");
-                              preDiscountRates[i].offers = 'false';
-                          }
-                      }
-                      if ( offer.type == 'discount' ) {
-                          console.log("Found offer discount");
-                          if ( nd = offer.numnights ) {
-                              console.log("staying for " + nd + " nights so offer valid!");
-                              console.log("pre-offer rate = " + preDiscountRates[i].roomPrice + ", saving = " + (1-offer.discount));
-                              preDiscountRates[i].roomPrice *= offer.discount ;
-                          } else {
-                              console.log("discount - num nights not valid!");
-                              preDiscountRates[i].offers = 'false';
-                          }
-                      }
-                  }
-              } else {
-                console.log("No offers for " + preDiscountRates[i]);
-              }
-            preDiscountRates[i].totalPrice = preDiscountRates[i].roomPrice + preDiscountRates[i].suppPrice;
+            }
 
-        }
-
-        // Now apply channels, user groups and advanced purchase discounts
-        channelProvider.getChannel(channel, function (error, channel) {
+            // Now apply channels, user groups and advanced purchase discounts
+            //channelProvider.getChannel(channel, function (error, channel) {
             console.log("Got channel...");
             for (var i = 0; i < preDiscountRates.length; i++) {
                 rates[i] = preDiscountRates[i];
-                preDiscountRates[i].flexRate   = preDiscountRates[i].roomPrice * channel.flexiblepurchase + preDiscountRates[i].suppPrice;
-                preDiscountRates[i].advRate = preDiscountRates[i].roomPrice * channel.advancedpurchase + preDiscountRates[i].suppPrice;
+                preDiscountRates[i].flexRate = preDiscountRates[i].totalPrice * channel.flexiblepurchase ;
+                preDiscountRates[i].advRate = preDiscountRates[i].totalPrice * channel.advancedpurchase ;
                 console.log("preDiscountRates[" + i + "]=" + JSON.stringify(preDiscountRates[i]));
             }
+            // All done!
+            rates = preDiscountRates;
+            callback(null, rates);
         });
 
-        // All done!
-        rates = preDiscountRates;
-        callback(null, rates);
+
     })
     // TODO - Ensure this returns what is needed (Json??)
 
