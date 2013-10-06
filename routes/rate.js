@@ -25,7 +25,7 @@ var parseUrlParams = function (req, res, next) {
 /*
  * Add routes for rates
  */
-var addRateRoutes = function (app, rateProvider, ratePlanProvider) {
+var addRateRoutes = function (app, rateProvider, ratePlanProvider, channelProvider) {
     app.get('/rates', parseUrlParams, function (req, res) {
         console.log("/rate route");
         // Date calculations
@@ -43,7 +43,7 @@ var addRateRoutes = function (app, rateProvider, ratePlanProvider) {
         var channel = req.urlParams.query.channel;
 
         var parking = 0;
-        rateProvider.getRates(hid, sd, ed, ad, ch, nd, ratePlanProvider, function (error, rates) {
+        rateProvider.getRates(channel, hid, sd, ed, ad, ch, nd, ratePlanProvider, channelProvider, function (error, rates) {
             // cors.setHeaders(res);
             res.send(rates);
 
@@ -89,7 +89,7 @@ function jPath(obj, a) {
 }
 
 
-RateProvider.prototype.getRates = function (hid, sd, ed, ad, ch, nd, ratePlanProvider, callback) {
+RateProvider.prototype.getRates = function (channel, hid, sd, ed, ad, ch, nd, ratePlanProvider, channelProvider, callback) {
     // Get Rateplans based on criteria in query string
     ratePlanProvider.findRatePlans(hid, sd, ed, ad, ch, nd, function (error, rateplans) {
         var rates = [],
@@ -136,7 +136,7 @@ RateProvider.prototype.getRates = function (hid, sd, ed, ad, ch, nd, ratePlanPro
         for (var i = 0; i < preDiscountRates.length; i++) {
             console.log("Offers:" + preDiscountRates[i].offers.length );
             if ( preDiscountRates[i].offers != null) {
-                  console.log("Calculating offers for " + preDiscountRates[i].offers);
+                  console.log("Calculating offers for " + JSON.stringify(preDiscountRates[i].offers));
                   for (var j=0; j < preDiscountRates[i].offers.length; j++ ) {
                       var offer = preDiscountRates[i].offers[j];
 
@@ -151,6 +151,17 @@ RateProvider.prototype.getRates = function (hid, sd, ed, ad, ch, nd, ratePlanPro
                               preDiscountRates[i].offers = 'false';
                           }
                       }
+                      if ( offer.type == 'discount' ) {
+                          console.log("Found offer discount");
+                          if ( nd = offer.numnights ) {
+                              console.log("staying for " + nd + " nights so offer valid!");
+                              console.log("pre-offer rate = " + preDiscountRates[i].roomPrice + ", saving = " + (1-offer.discount));
+                              preDiscountRates[i].roomPrice *= offer.discount ;
+                          } else {
+                              console.log("discount - num nights not valid!");
+                              preDiscountRates[i].offers = 'false';
+                          }
+                      }
                   }
               } else {
                 console.log("No offers for " + preDiscountRates[i]);
@@ -160,17 +171,18 @@ RateProvider.prototype.getRates = function (hid, sd, ed, ad, ch, nd, ratePlanPro
         }
 
         // Now apply channels, user groups and advanced purchase discounts
-        var c = 0;
+        channelProvider.getChannel(channel, function (error, channel) {
+            console.log("Got channel...");
+            for (var i = 0; i < preDiscountRates.length; i++) {
+                rates[i] = preDiscountRates[i];
+                preDiscountRates[i].flexRate   = preDiscountRates[i].roomPrice * channel.flexiblepurchase + preDiscountRates[i].suppPrice;
+                preDiscountRates[i].advRate = preDiscountRates[i].roomPrice * channel.advancedpurchase + preDiscountRates[i].suppPrice;
+                console.log("preDiscountRates[" + i + "]=" + JSON.stringify(preDiscountRates[i]));
+            }
+        });
 
-        for (var i = 0; i < preDiscountRates.length; i++) {
-
-        }
-
-
-
-            // All done!
+        // All done!
         rates = preDiscountRates;
-        //console.log("rates[]=" + JSON.stringify(rates));
         callback(null, rates);
     })
     // TODO - Ensure this returns what is needed (Json??)

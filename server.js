@@ -48,8 +48,8 @@ var channelProvider =   new ChannelProvider('mongodb.local', 'rateplans', 27017)
 // Set up routes
 app.get('/', routes.index);
 var ratePlanRoutes =    rateplan.addRatePlanRoutes(app, ratePlanProvider);
-var rateRoutes =        rate.addRateRoutes(app, rateProvider, ratePlanProvider);
 var channelRoutes =     channel.addChannelRoutes(app, channelProvider);
+var rateRoutes =        rate.addRateRoutes(app, rateProvider, ratePlanProvider, channelProvider);
 
 // Now create the server
 http.createServer(app).listen(app.get('port'), function () {
